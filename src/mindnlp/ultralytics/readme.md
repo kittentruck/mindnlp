@@ -104,3 +104,13 @@ python examples/yolo/pose/inference.py
 ```bash
 python standalone.py
 ```
+
+## 5. 预训练权重下载 (Pre-trained Weights)
+若预处理脚本自动下载权重文件失败，请点击下方链接手动下载官方 PyTorch 权重文件（.pt），并使用本文档第 2 节中的 convert.py 脚本将其转换为 MindSpore 可用的 .ckpt 权重文件：
+目标检测 (Detect): https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt
+
+图像分类 (Classify): https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-cls.pt
+                
+实例分割 (Segment): https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-seg.pt
+    
+姿态估计 (Pose): https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n-pose.pt
