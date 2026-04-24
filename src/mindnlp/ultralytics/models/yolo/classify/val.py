@@ -19,8 +19,16 @@ class ClassificationValidator(BaseValidator):
         # 确保任务类型正确声明
         if self.args is None:
             self.args = SimpleNamespace(task="classify", half=False)
+        elif isinstance(self.args, dict):
+            args_dict = dict(self.args)
+            args_dict["task"] = "classify"
+            if "half" not in args_dict:
+                args_dict["half"] = False
+            self.args = SimpleNamespace(**args_dict)
         else:
             self.args.task = "classify"
+            if not hasattr(self.args, "half"):
+                self.args.half = False
             
         self.names = None 
 

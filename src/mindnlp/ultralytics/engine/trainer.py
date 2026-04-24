@@ -108,29 +108,35 @@ class BaseTrainer:
                         loss_val = float(loss.asnumpy()) if hasattr(loss, "asnumpy") else float(loss)
                         print(f"Epoch [{epoch}/{self.epochs-1}] Step [{step}/{steps_per_epoch}] | Loss: {loss_val:.4f}")
 
+            # 每轮先保存最新权重，确保训练产物可用
+            ms.save_checkpoint(self.ema.ema_model, str(self.save_dir / "last.ckpt"))
+
             # 验证与保存阶段
-            if (epoch + 1) % self.args.val_interval == 0 or epoch == self.epochs - 1:
-                print(f"\n[INFO] 开始执行 Epoch {epoch} 验证程序...")
-                self.model.set_train(False) 
-                
-                validator = self.get_validator()
-                stats = validator(self.ema.ema_model)
-                
-                print("-" * 50)
-                print(f"[评估报告] Epoch {epoch}")
-                for k, v in stats.items():
-                    if k.startswith('metrics/'):
-                        metric_name = k.replace('metrics/', '')
-                        print(f"  - {metric_name:<15} : {float(v):.5f}")
-                
-                fitness_f = float(stats.get('fitness', 0.0))
-                print(f"[INFO] 当前模型综合评价指标 (Fitness): {fitness_f:.5f}")
-                print("-" * 50 + "\n")
-                
-                self._save_checkpoint(epoch, fitness_f)
-                
-                self.model.set_train(True) 
-                self.train_step.set_train(True)
+            if (epoch + 1) % self.args.val_interval == 0:
+                try:
+                    print(f"\n[INFO] 开始执行 Epoch {epoch} 验证程序...")
+                    self.model.set_train(False)
+
+                    validator = self.get_validator()
+                    stats = validator(self.ema.ema_model)
+
+                    print("-" * 50)
+                    print(f"[评估报告] Epoch {epoch}")
+                    for k, v in stats.items():
+                        if k.startswith('metrics/'):
+                            metric_name = k.replace('metrics/', '')
+                            print(f"  - {metric_name:<15} : {float(v):.5f}")
+
+                    fitness_f = float(stats.get('fitness', 0.0))
+                    print(f"[INFO] 当前模型综合评价指标 (Fitness): {fitness_f:.5f}")
+                    print("-" * 50 + "\n")
+
+                    self._save_checkpoint(epoch, fitness_f)
+                except Exception as e:
+                    print(f"[WARNING] Epoch {epoch} 验证阶段执行失败，已跳过 best.ckpt 更新。错误信息: {e}")
+                finally:
+                    self.model.set_train(True)
+                    self.train_step.set_train(True)
 
     def _save_checkpoint(self, epoch, fitness):
         """权重序列化保存逻辑"""

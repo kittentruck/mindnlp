@@ -36,7 +36,7 @@ if __name__ == "__main__":
     #  训练模型
     results = model.train(
         data="coco128.yaml", 
-        epochs=100, 
+        epochs=10, 
         imgsz=640, 
         batch=16, 
         amp=False, 

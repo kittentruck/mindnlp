@@ -88,7 +88,9 @@ np.savez('{npz_file}', **np_dict)
             f.write(extract_script.strip())
         
         # 运行子进程提取数据
-        subprocess.run(["python", "temp_extract.py"], check=True)
+        env = os.environ.copy()
+        env["TORCH_DEVICE_BACKEND_AUTOLOAD"] = "0"
+        subprocess.run([sys.executable, "temp_extract.py"], check=True, env=env)
         os.remove("temp_extract.py")
 
     # 2. 回到主进程：读取绝对纯净的 NumPy 字典，彻底断绝与 PyTorch 的瓜葛

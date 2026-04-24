@@ -5,6 +5,7 @@ import mindspore as ms
 from mindspore import Tensor, ops
 
 from ultralytics.engine.validator import BaseValidator
+from ultralytics.data.loaders import create_dataloader
 from ultralytics.utils.ops import non_max_suppression, process_mask, xywh2xyxy_np
 from ultralytics.utils.metrics import SegmentMetrics
 
@@ -86,7 +87,7 @@ class SegmentationValidator(BaseValidator):
         batch_idx = batch["batch_idx"].view(-1).asnumpy()
         all_gt_cls = batch["cls"].view(-1).asnumpy()
         all_gt_bboxes = batch["bboxes"].asnumpy()
-        all_gt_masks = batch["masks"]
+        all_gt_masks = batch["masks"].asnumpy()
         
         imgsz = getattr(self.args, 'imgsz', 640)
 

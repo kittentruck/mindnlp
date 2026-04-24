@@ -1,3 +1,4 @@
+import os
 import time
 import logging
 import yaml
@@ -46,6 +47,26 @@ class BaseValidator:
         # 确保模型处于推理模式
         model.set_train(False) 
         self.init_metrics(model)
+
+        if self.dataloader is None:
+            if self.args is None:
+                raise ValueError("验证阶段缺少数据集配置参数 data，无法构建 dataloader。")
+
+            if isinstance(self.args, dict):
+                data_path = self.args.get("data")
+                batch_size = self.args.get("batch", self.args.get("batch_size", 16))
+            else:
+                data_path = getattr(self.args, "data", None)
+                batch_size = getattr(self.args, "batch", getattr(self.args, "batch_size", 16))
+
+            if not data_path:
+                raise ValueError("验证阶段缺少数据集配置参数 data，无法构建 dataloader。")
+
+            with open(data_path, "r", encoding="utf-8") as f:
+                data_cfg = yaml.safe_load(f)
+
+            val_path = os.path.join(data_cfg.get('path', ''), data_cfg.get('val', 'val'))
+            self.dataloader = self.get_dataloader(val_path, batch_size=batch_size)
 
         bar = tqdm(self.dataloader.create_dict_iterator(), 
                    desc="Validating", 

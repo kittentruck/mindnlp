@@ -3,6 +3,7 @@ import mindspore as ms
 from mindspore import ops
 
 from ultralytics.engine.validator import BaseValidator
+from ultralytics.data.loaders import create_dataloader
 from ultralytics.utils.ops import non_max_suppression, xywh2xyxy_np
 from ultralytics.utils.metrics import PoseMetrics, kpt_iou
 

@@ -177,7 +177,7 @@ class YOLO:
         else:
             raise ValueError(f"[MindNLP YOLO] 暂不支持的任务类型: {self.task}")
             
-        return validator(model=self.model)
+        return validator(model=pass_model)
 
     def __call__(self, source=None, **kwargs):
         """

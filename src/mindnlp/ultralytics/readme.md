@@ -3,7 +3,7 @@
 本项目基于 MindSpore 框架实现了 YOLO11 的四大核心任务：图像分类、目标检测、实例分割和姿态估计。支持从头训练、加载预训练权重微调、模型验证与推理。
 
 ```bash
-# 创建环境 (Python 3.9)
+# 创建环境 (Python 3.10)
 conda create -n mindnlp_yolo python=3.10 -y
 conda activate mindnlp_yolo
 
